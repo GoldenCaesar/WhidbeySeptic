@@ -8,28 +8,10 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <style type="text/tailwindcss">
       :root {
-        --primary-50: #f0f9ff;
-        --primary-100: #e0f2fe;
-        --primary-200: #bae6fd;
-        --primary-300: #7dd3fc;
-        --primary-400: #38bdf8;
-        --primary-500: #0ea5e9;
-        --primary-600: #0284c7;
-        --primary-700: #0369a1;
-        --primary-800: #075985;
-        --primary-900: #0c4a6e;
-        --primary-950: #082f49;
-        --secondary-50: #f8fafc;
-        --secondary-100: #f1f5f9;
-        --secondary-200: #e2e8f0;
-        --secondary-300: #cbd5e1;
-        --secondary-400: #94a3b8;
-        --secondary-500: #64748b;
-        --secondary-600: #475569;
-        --secondary-700: #334155;
-        --secondary-800: #1e293b;
-        --secondary-900: #0f172a;
-        --secondary-950: #020617;
+        --primary-color: #1990e5;
+        --secondary-color: #f5f5f5;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
       }
       body {
         font-family: 'Public Sans', sans-serif;
@@ -41,7 +23,7 @@
     }
   </style>
   </head>
-<body class="bg-[var(--secondary-50)]">
+<body class="bg-[var(--secondary-color)]">
 <div class="relative flex size-full min-h-screen flex-col justify-between group/design-root">
 <div class="flex flex-col">
 <header class="flex items-center justify-between bg-white p-4 shadow-sm">
@@ -53,8 +35,8 @@
 </header>
 <main class="flex-1 p-4 sm:p-6">
 <div class="text-center mb-8">
-<h2 class="text-3xl font-bold tracking-tight text-[var(--secondary-800)] sm:text-4xl">What Our Customers Say</h2>
-<p class="mt-4 text-lg text-[var(--secondary-600)]">
+<h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">What Our Customers Say</h2>
+<p class="mt-4 text-lg text-[var(--text-secondary)]">
               Real stories from real people. Your satisfaction is our priority.
             </p>
 </div>
@@ -62,11 +44,6 @@
 <!-- Elfsight Google Reviews | Untitled Google Reviews -->
 <script src="https://static.elfsight.com/platform/platform.js" async></script>
 <div class="elfsight-app-f017f370-7e50-412b-8e5d-a3dbcdc33210" data-elfsight-app-lazy></div>
-</div>
-<div class="mt-10 text-center">
-<button class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-[var(--primary-600)] border border-transparent rounded-lg shadow-sm hover:bg-[var(--primary-700)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-500)] transition-colors">
-              Leave a Review
-            </button>
 </div>
 </main>
 </div>
