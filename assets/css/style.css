@@ -1,0 +1,11 @@
+.logo-size {
+  height: 4rem; /* 64px, h-16 */
+  width: 4rem; /* 64px, w-16 */
+}
+
+@media (min-width: 768px) {
+  .logo-size {
+    height: 8rem; /* 128px, h-32 */
+    width: 8rem; /* 128px, w-32 */
+  }
+}
