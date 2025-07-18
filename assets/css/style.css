@@ -1,12 +1,11 @@
 .logo-size {
-  height: 8rem; /* 128px, h-32 */
-  width: 8rem; /* 128px, w-32 */
-  max-width: 50vw;
+  height: 4rem; /* 64px, h-16 */
+  width: 4rem; /* 64px, w-16 */
 }
 
 @media (min-width: 768px) {
   .logo-size {
-    height: 12rem; /* 192px, h-48 */
-    width: 12rem; /* 192px, w-48 */
+    height: 8rem; /* 128px, h-32 */
+    width: 8rem; /* 128px, w-32 */
   }
 }
