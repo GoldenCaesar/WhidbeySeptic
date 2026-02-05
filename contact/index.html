@@ -211,14 +211,19 @@
     // If either field has a value, the other is not required
     if (siteAddressValue) {
       what3wordsInput.removeAttribute('required');
-      siteAddressInput.setAttribute('required', '');
     } else if (what3wordsValue) {
       siteAddressInput.removeAttribute('required');
-      what3wordsInput.setAttribute('required', '');
     } else {
       // Both are empty, both required
       siteAddressInput.setAttribute('required', '');
       what3wordsInput.setAttribute('required', '');
+    }
+
+    // Hide error message when user starts correcting the address
+    if (siteAddressValue && siteAddressError.classList.contains('hidden') === false) {
+      if (validateAddress(siteAddressValue)) {
+        siteAddressError.classList.add('hidden');
+      }
     }
   }
 
