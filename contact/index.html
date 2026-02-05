@@ -218,25 +218,13 @@
     // Remove any characters that aren't letters, periods, or hyphens
     cleaned = cleaned.replace(/[^a-z.\-]/g, '');
     
-    // Limit to 3 words by counting periods and truncating after 2 periods
-    // This allows users to type periods naturally without them being removed
-    const periodCount = (cleaned.match(/\./g) || []).length;
-    if (periodCount > 2) {
-      // Find the position of the 3rd period and truncate there
-      let count = 0;
-      let truncateIndex = -1;
-      for (let i = 0; i < cleaned.length; i++) {
-        if (cleaned[i] === '.') {
-          count++;
-          if (count === 3) {
-            truncateIndex = i;
-            break;
-          }
-        }
-      }
-      if (truncateIndex > -1) {
-        cleaned = cleaned.substring(0, truncateIndex);
-      }
+    // Limit to 3 words by allowing only 2 periods
+    // Split by period, take first 3 parts, then rejoin
+    // This preserves periods as users type while preventing a 3rd period
+    const parts = cleaned.split('.');
+    if (parts.length > 3) {
+      // Keep only first 3 parts (which means 2 periods)
+      cleaned = parts.slice(0, 3).join('.');
     }
     
     return cleaned;
