@@ -334,7 +334,7 @@
       }
       
       // Validate state format (2 letters)
-      if (!/^[A-Z]{2}$/i.test(siteState)) {
+      if (!/^[A-Z]{2}$/.test(siteState)) {
         alert('Please enter a valid 2-letter state code (e.g., WA, CA, NY).');
         siteStateInput.focus();
         return;
