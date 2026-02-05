@@ -228,7 +228,7 @@
     // This preserves periods as users type while preventing a 3rd period
     const parts = cleaned.split('.');
     if (parts.length > 3) {
-      // Keep only first 3 parts (which means 2 periods)
+      // Keep only first 3 parts (separated by 2 periods)
       return parts.slice(0, 3).join('.');
     }
     
