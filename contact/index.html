@@ -64,6 +64,10 @@
 <input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Your Name" type="text" name="name" required/>
 </label>
 <label class="block">
+<span class="sr-only">Site Address</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Site Address" type="text" name="site_address" required/>
+</label>
+<label class="block">
 <span class="sr-only">Your Email</span>
 <input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Your Email" type="email" name="email" required/>
 </label>
@@ -183,6 +187,7 @@
     event.preventDefault(); // Prevent default form submission
 
     const name = contactForm.elements['name'].value;
+    const siteAddress = contactForm.elements['site_address'].value;
     const email = contactForm.elements['email'].value;
     const phone = contactForm.elements['phone'].value;
     const message = contactForm.elements['message'].value;
@@ -191,6 +196,7 @@
                        `?subject=${encodeURIComponent('Contact Form Submission from ' + name)}` +
                        `&body=${encodeURIComponent(
                          `Name: ${name}\n` +
+                         `Site Address: ${siteAddress}\n` +
                          `Email: ${email}\n` +
                          `Phone: ${phone}\n\n` +
                          `Message:\n${message}`
