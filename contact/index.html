@@ -65,7 +65,13 @@
 </label>
 <label class="block">
 <span class="sr-only">Site Address</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Site Address" type="text" name="site_address" required/>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Site Address (e.g., 123 Main St, Seattle, WA 98101)" type="text" name="site_address" id="site_address" required/>
+<span class="text-red-600 text-sm mt-1 hidden" id="site_address_error">Please enter a complete address with city, state, and zip code</span>
+</label>
+<label class="block">
+<span class="sr-only">What3Words Address</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="What3Words Address (e.g., filled.count.soap)" type="text" name="what3words" id="what3words" required/>
+<span class="text-xs text-gray-500 mt-1 block">Enter 3 words separated by periods (e.g., boot.onward.masking)</span>
 </label>
 <label class="block">
 <span class="sr-only">Your Email</span>
@@ -183,20 +189,139 @@
 
 <script>
   const contactForm = document.getElementById('contact-form');
+  const siteAddressInput = document.getElementById('site_address');
+  const what3wordsInput = document.getElementById('what3words');
+  const siteAddressError = document.getElementById('site_address_error');
+
+  // Function to validate address format (contains city, state, and zip)
+  function validateAddress(address) {
+    // Check if address contains at least:
+    // 1. Some text before a comma (street)
+    // 2. A state (2 letters)
+    // 3. A zip code (5 digits, optionally followed by -4 digits)
+    const addressPattern = /^.+,\s*.+,\s*[A-Z]{2}\s+\d{5}(-\d{4})?$/i;
+    return addressPattern.test(address.trim());
+  }
+
+  // Function to format What3Words input
+  function formatWhat3Words(input) {
+    // Remove any leading slashes and spaces
+    let cleaned = input.replace(/^[\/\s]+/, '').toLowerCase();
+    
+    // Remove any characters that aren't letters, periods, or hyphens
+    cleaned = cleaned.replace(/[^a-z.\-]/g, '');
+    
+    // Split by periods and filter out empty strings
+    let words = cleaned.split('.').filter(w => w.length > 0);
+    
+    // Limit to 3 words
+    if (words.length > 3) {
+      words = words.slice(0, 3);
+    }
+    
+    // Join with periods
+    return words.join('.');
+  }
+
+  // Function to validate What3Words format (3 words separated by periods)
+  function validateWhat3Words(input) {
+    const w3wPattern = /^[a-z\-]+\.[a-z\-]+\.[a-z\-]+$/;
+    return w3wPattern.test(input.trim().toLowerCase());
+  }
+
+  // Handle What3Words input formatting
+  what3wordsInput.addEventListener('input', function(e) {
+    const cursorPosition = e.target.selectionStart;
+    const oldValue = e.target.value;
+    const formatted = formatWhat3Words(oldValue);
+    
+    if (oldValue !== formatted) {
+      e.target.value = formatted;
+      
+      // Try to maintain cursor position
+      const diff = formatted.length - oldValue.length;
+      const newPosition = cursorPosition + diff;
+      e.target.setSelectionRange(newPosition, newPosition);
+    }
+    
+    updateRequiredFields();
+  });
+
+  // Function to update required states based on input
+  function updateRequiredFields() {
+    const siteAddressValue = siteAddressInput.value.trim();
+    const what3wordsValue = what3wordsInput.value.trim();
+
+    // If either field has a value, the other is not required
+    if (siteAddressValue) {
+      what3wordsInput.removeAttribute('required');
+    } else if (what3wordsValue) {
+      siteAddressInput.removeAttribute('required');
+    } else {
+      // Both are empty, both required
+      siteAddressInput.setAttribute('required', '');
+      what3wordsInput.setAttribute('required', '');
+    }
+
+    // Hide error message when user starts correcting the address
+    if (siteAddressValue && siteAddressError.classList.contains('hidden') === false) {
+      if (validateAddress(siteAddressValue)) {
+        siteAddressError.classList.add('hidden');
+      }
+    }
+  }
+
+  // Add input event listeners
+  siteAddressInput.addEventListener('input', updateRequiredFields);
+
   contactForm.addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
 
     const name = contactForm.elements['name'].value;
-    const siteAddress = contactForm.elements['site_address'].value;
+    const siteAddress = contactForm.elements['site_address'].value.trim();
+    const what3words = contactForm.elements['what3words'].value.trim();
     const email = contactForm.elements['email'].value;
     const phone = contactForm.elements['phone'].value;
     const message = contactForm.elements['message'].value;
+
+    // Validate that at least one address field is filled
+    if (!siteAddress && !what3words) {
+      alert('Please enter either a Site Address or a What3Words address.');
+      return;
+    }
+
+    // Validate site address format if it's provided
+    if (siteAddress && !validateAddress(siteAddress)) {
+      siteAddressError.classList.remove('hidden');
+      siteAddressInput.focus();
+      return;
+    } else {
+      siteAddressError.classList.add('hidden');
+    }
+
+    // Validate What3Words format if it's provided
+    if (what3words && !validateWhat3Words(what3words)) {
+      alert('Please enter a valid What3Words address with exactly 3 words separated by periods (e.g., filled.count.soap)');
+      what3wordsInput.focus();
+      return;
+    }
+
+    // Build the email body
+    let addressInfo = '';
+    if (siteAddress) {
+      addressInfo += `Site Address: ${siteAddress}\n`;
+    }
+    if (what3words) {
+      // Convert What3Words to clickable link
+      const w3wLink = `https://w3w.co/${what3words}`;
+      addressInfo += `What3Words: ${w3wLink}\n`;
+    }
 
     const mailtoLink = `mailto:WhidbeySepticLLC@gmail.com` +
                        `?subject=${encodeURIComponent('Contact Form Submission from ' + name)}` +
                        `&body=${encodeURIComponent(
                          `Name: ${name}\n` +
-                         `Site Address: ${siteAddress}\n` +
+                         addressInfo +
                          `Email: ${email}\n` +
                          `Phone: ${phone}\n\n` +
                          `Message:\n${message}`
