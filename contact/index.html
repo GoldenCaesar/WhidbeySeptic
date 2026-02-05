@@ -66,20 +66,20 @@
 <div class="space-y-4">
 <label class="block">
 <span class="text-sm font-medium text-[var(--text-primary)] mb-2 block">Site Address</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Street Address" type="text" name="site_street" id="site_street" required/>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Street Address" type="text" name="site_street" id="site_street" autocomplete="street-address" required/>
 </label>
 <label class="block">
 <span class="sr-only">City</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="City" type="text" name="site_city" id="site_city" required/>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="City" type="text" name="site_city" id="site_city" autocomplete="address-level2" required/>
 </label>
 <div class="grid grid-cols-2 gap-4">
 <label class="block">
 <span class="sr-only">State</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="State" type="text" name="site_state" id="site_state" maxlength="2" required/>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="State" type="text" name="site_state" id="site_state" maxlength="2" pattern="[A-Za-z]{2}" autocomplete="address-level1" required/>
 </label>
 <label class="block">
 <span class="sr-only">Zip Code</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Zip Code" type="text" name="site_zip" id="site_zip" pattern="\d{5}(-\d{4})?" required/>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Zip Code" type="text" name="site_zip" id="site_zip" pattern="\d{5}(-\d{4})?" inputmode="numeric" autocomplete="postal-code" required/>
 </label>
 </div>
 </div>
