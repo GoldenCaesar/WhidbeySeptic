@@ -63,13 +63,33 @@
 <span class="sr-only">Your Name</span>
 <input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Your Name" type="text" name="name" required/>
 </label>
+<div class="space-y-4">
 <label class="block">
-<span class="sr-only">Site Address</span>
-<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Site Address (e.g., 123 Main St, Seattle, WA 98101)" type="text" name="site_address" id="site_address" required/>
-<span class="text-red-600 text-sm mt-1 hidden" id="site_address_error">Please enter a complete address with city, state, and zip code</span>
+<span class="text-sm font-medium text-[var(--text-primary)] mb-2 block">Site Address</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Street Address" type="text" name="site_street" id="site_street" autocomplete="street-address" required/>
 </label>
 <label class="block">
-<span class="sr-only">What3Words Address</span>
+<span class="sr-only">City</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="City" type="text" name="site_city" id="site_city" autocomplete="address-level2" required/>
+</label>
+<div class="grid grid-cols-2 gap-4">
+<label class="block">
+<span class="sr-only">State</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="State" type="text" name="site_state" id="site_state" maxlength="2" pattern="[A-Za-z]{2}" autocomplete="address-level1" required/>
+</label>
+<label class="block">
+<span class="sr-only">Zip Code</span>
+<input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="Zip Code" type="text" name="site_zip" id="site_zip" pattern="\d{5}(-\d{4})?" inputmode="numeric" autocomplete="postal-code" required/>
+</label>
+</div>
+</div>
+<div class="flex items-center gap-3 py-2">
+<div class="flex-1 border-t border-gray-300"></div>
+<span class="text-sm font-medium text-[var(--text-secondary)] uppercase">OR</span>
+<div class="flex-1 border-t border-gray-300"></div>
+</div>
+<label class="block">
+<span class="text-sm font-medium text-[var(--text-primary)] mb-2 block">What3Words Address</span>
 <input class="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring focus:ring-[var(--primary-color)] focus:ring-opacity-50 h-14 p-4 text-base" placeholder="What3Words Address (e.g., filled.count.soap)" type="text" name="what3words" id="what3words" required/>
 <span class="text-xs text-gray-500 mt-1 block">Enter 3 words separated by periods (e.g., boot.onward.masking)</span>
 </label>
@@ -189,19 +209,11 @@
 
 <script>
   const contactForm = document.getElementById('contact-form');
-  const siteAddressInput = document.getElementById('site_address');
+  const siteStreetInput = document.getElementById('site_street');
+  const siteCityInput = document.getElementById('site_city');
+  const siteStateInput = document.getElementById('site_state');
+  const siteZipInput = document.getElementById('site_zip');
   const what3wordsInput = document.getElementById('what3words');
-  const siteAddressError = document.getElementById('site_address_error');
-
-  // Function to validate address format (contains city, state, and zip)
-  function validateAddress(address) {
-    // Check if address contains at least:
-    // 1. Some text before a comma (street)
-    // 2. A state (2 letters)
-    // 3. A zip code (5 digits, optionally followed by -4 digits)
-    const addressPattern = /^.+,\s*.+,\s*[A-Z]{2}\s+\d{5}(-\d{4})?$/i;
-    return addressPattern.test(address.trim());
-  }
 
   // Function to format What3Words input
   function formatWhat3Words(input) {
@@ -211,16 +223,16 @@
     // Remove any characters that aren't letters, periods, or hyphens
     cleaned = cleaned.replace(/[^a-z.\-]/g, '');
     
-    // Split by periods and filter out empty strings
-    let words = cleaned.split('.').filter(w => w.length > 0);
-    
-    // Limit to 3 words
-    if (words.length > 3) {
-      words = words.slice(0, 3);
+    // Limit to 3 words by allowing only 2 periods
+    // Split by period, take first 3 parts, then rejoin
+    // This preserves periods as users type while preventing a 3rd period
+    const parts = cleaned.split('.');
+    if (parts.length > 3) {
+      // Keep only first 3 parts (separated by 2 periods)
+      return parts.slice(0, 3).join('.');
     }
     
-    // Join with periods
-    return words.join('.');
+    return cleaned;
   }
 
   // Function to validate What3Words format (3 words separated by periods)
@@ -247,56 +259,98 @@
     updateRequiredFields();
   });
 
+  // Handle state input formatting (auto-uppercase)
+  siteStateInput.addEventListener('input', function(e) {
+    e.target.value = e.target.value.toUpperCase();
+  });
+
+  // Function to check if site address fields have any values
+  function hasSiteAddressValue() {
+    return siteStreetInput.value.trim() || 
+           siteCityInput.value.trim() || 
+           siteStateInput.value.trim() || 
+           siteZipInput.value.trim();
+  }
+
   // Function to update required states based on input
   function updateRequiredFields() {
-    const siteAddressValue = siteAddressInput.value.trim();
-    const what3wordsValue = what3wordsInput.value.trim();
+    const hasSiteAddress = hasSiteAddressValue();
+    const hasWhat3words = what3wordsInput.value.trim();
 
-    // If either field has a value, the other is not required
-    if (siteAddressValue) {
+    // If either address type has any value, make that type's fields required
+    // and the other type's fields optional
+    if (hasSiteAddress) {
+      // Site address has values, make all site address fields required
+      siteStreetInput.setAttribute('required', '');
+      siteCityInput.setAttribute('required', '');
+      siteStateInput.setAttribute('required', '');
+      siteZipInput.setAttribute('required', '');
       what3wordsInput.removeAttribute('required');
-    } else if (what3wordsValue) {
-      siteAddressInput.removeAttribute('required');
-    } else {
-      // Both are empty, both required
-      siteAddressInput.setAttribute('required', '');
+    } else if (hasWhat3words) {
+      // What3Words has value, make site address fields optional
+      siteStreetInput.removeAttribute('required');
+      siteCityInput.removeAttribute('required');
+      siteStateInput.removeAttribute('required');
+      siteZipInput.removeAttribute('required');
       what3wordsInput.setAttribute('required', '');
-    }
-
-    // Hide error message when user starts correcting the address
-    if (siteAddressValue && siteAddressError.classList.contains('hidden') === false) {
-      if (validateAddress(siteAddressValue)) {
-        siteAddressError.classList.add('hidden');
-      }
+    } else {
+      // Both are empty, make all site address fields required (default)
+      siteStreetInput.setAttribute('required', '');
+      siteCityInput.setAttribute('required', '');
+      siteStateInput.setAttribute('required', '');
+      siteZipInput.setAttribute('required', '');
+      what3wordsInput.setAttribute('required', '');
     }
   }
 
-  // Add input event listeners
-  siteAddressInput.addEventListener('input', updateRequiredFields);
+  // Add input event listeners to all address fields
+  siteStreetInput.addEventListener('input', updateRequiredFields);
+  siteCityInput.addEventListener('input', updateRequiredFields);
+  siteStateInput.addEventListener('input', updateRequiredFields);
+  siteZipInput.addEventListener('input', updateRequiredFields);
 
   contactForm.addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
 
     const name = contactForm.elements['name'].value;
-    const siteAddress = contactForm.elements['site_address'].value.trim();
+    const siteStreet = contactForm.elements['site_street'].value.trim();
+    const siteCity = contactForm.elements['site_city'].value.trim();
+    const siteState = contactForm.elements['site_state'].value.trim();
+    const siteZip = contactForm.elements['site_zip'].value.trim();
     const what3words = contactForm.elements['what3words'].value.trim();
     const email = contactForm.elements['email'].value;
     const phone = contactForm.elements['phone'].value;
     const message = contactForm.elements['message'].value;
 
-    // Validate that at least one address field is filled
-    if (!siteAddress && !what3words) {
+    // Check if we have site address components
+    const hasSiteAddress = siteStreet || siteCity || siteState || siteZip;
+
+    // Validate that at least one address type is filled
+    if (!hasSiteAddress && !what3words) {
       alert('Please enter either a Site Address or a What3Words address.');
       return;
     }
 
-    // Validate site address format if it's provided
-    if (siteAddress && !validateAddress(siteAddress)) {
-      siteAddressError.classList.remove('hidden');
-      siteAddressInput.focus();
-      return;
-    } else {
-      siteAddressError.classList.add('hidden');
+    // If site address is started, validate all fields are filled
+    if (hasSiteAddress) {
+      if (!siteStreet || !siteCity || !siteState || !siteZip) {
+        alert('Please complete all Site Address fields (Street, City, State, and Zip Code).');
+        return;
+      }
+      
+      // Validate state format (2 letters)
+      if (!/^[A-Z]{2}$/.test(siteState)) {
+        alert('Please enter a valid 2-letter state code (e.g., WA, CA, NY).');
+        siteStateInput.focus();
+        return;
+      }
+      
+      // Validate zip code format
+      if (!/^\d{5}(-\d{4})?$/.test(siteZip)) {
+        alert('Please enter a valid zip code (e.g., 98101 or 98101-1234).');
+        siteZipInput.focus();
+        return;
+      }
     }
 
     // Validate What3Words format if it's provided
@@ -308,8 +362,9 @@
 
     // Build the email body
     let addressInfo = '';
-    if (siteAddress) {
-      addressInfo += `Site Address: ${siteAddress}\n`;
+    if (hasSiteAddress) {
+      const fullAddress = `${siteStreet}, ${siteCity}, ${siteState} ${siteZip}`;
+      addressInfo += `Site Address: ${fullAddress}\n`;
     }
     if (what3words) {
       // Convert What3Words to clickable link
